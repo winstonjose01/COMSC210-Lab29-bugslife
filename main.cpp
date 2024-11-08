@@ -10,6 +10,7 @@
 #include <string>
 #include <sstream>
 #include<thread>
+#include <assert.h>
 using namespace std;
 
 const int DAYS_IN_MONTH[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
@@ -34,12 +35,14 @@ int main(){
 
     int m = 0;
     for (string month : MONTH) {
+        string date = "";
         for (int i = 1; i <= DAYS_IN_MONTH[m]; i++){
-            string date = month + "-" + to_string(i);
-            //cout << date << " - " << m << " - " << i << endl;
-            environment_factors = load_environment_factors(filename);
+            if (i < 10)
+                date = month + "-0" + to_string(i);
+            else
+                date = month + "-" + to_string(i);
 
-            //cout << date<< "-" << environment_factors[date][0] <<  "," << environment_factors[date][1] << endl;
+            environment_factors = load_environment_factors(filename);
             
             if (environment_factors.find(date) != environment_factors.end()){
                 temperature = environment_factors[date][0];
@@ -71,14 +74,15 @@ int main(){
 
         }
         m++;
+
     }
-
-
     for (const auto& [date,populations] : populationResults) {
         cout << date << " - Aphid Population: " << populations[0].back() << ", Ant Population: " << populations[1].back() << ", Ladybug Population: " << populations[2].back() << std::endl;
         this_thread::sleep_for(chrono::seconds(1));
     }
-
+    //***************Unit Testing****************/
+    test_load_environment_factors();
+    cout << "All tests completed successfully.\n";
 
     return 0;
 }
@@ -106,4 +110,18 @@ map<string,array<float,3>> load_environment_factors(string filename){
     }
     return environment_factors;
 
+}
+
+//**************************** Unit Testing ****************************************
+void test_load_environment_factors(){
+
+    map<std::string, std::array<float, 3>> test_env_factors; 
+
+    test_env_factors= load_environment_factors("test_weather_data.csv");
+
+    assert(test_env_factors["01-01"][0] == 43.7);  // Temperature on Jan 1
+    assert(test_env_factors["01-01"][1] == 0.78);  // Precipitation on Jan 1
+    assert(test_env_factors["01-01"][2] == 4.2);   // UV Index on Jan 1
+
+    cout << "load_environment_factors test passed.\n";
 }
