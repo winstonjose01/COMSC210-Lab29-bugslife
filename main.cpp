@@ -32,16 +32,19 @@ int main(){
     Ladybug ladybug(125);
 
     for (string month : MONTH) {
-        for (int i = 1; i <= DAYS_IN_MONTH[i]; i++){
+        int m = 0;
+        for (int i = 0; i <= DAYS_IN_MONTH[0]; i++){
             string date = month + to_string(i);
+            //cout << date << endl;
             environment_factors = load_environment_factors(filename);
 
-            //cout << environment_factors[date][0];
+            cout << date<< "-" << environment_factors[date][0] <<  "," << environment_factors[date][1] << endl;
             
             if (environment_factors.find(date) != environment_factors.end()){
                 temperature = environment_factors[date][0];
                 precipitation = environment_factors[date][1];
                 UV_index = environment_factors[date][2];
+                //cout << date << "|" << temperature << endl;
             }
             else{
                 cout << "No environmental data for date :" << date << endl;
@@ -64,12 +67,13 @@ int main(){
             aphid.set_initial_pop(aphid.get_current_pop());
             aphid.set_initial_pop(aphid.get_current_pop());
         }
+        m++;
     }
 
 
-    for (const auto& [date,populations] : populationResults) {
-        cout << date << " - Aphid Population: " << populations[0].back() << ", Ant Population: " << populations[1].back() << ", Ladybug Population: " << populations[2].back() << std::endl;
-    }
+    // for (const auto& [date,populations] : populationResults) {
+    //     cout << date << " - Aphid Population: " << populations[0].back() << ", Ant Population: " << populations[1].back() << ", Ladybug Population: " << populations[2].back() << std::endl;
+    // }
 
 
     return 0;
@@ -78,20 +82,23 @@ int main(){
 map<string,array<float,3>> load_environment_factors(string filename){
 
     map<string,array<float,3>> environment_factors;
-    string line, month;
+    string line, month, day, temperature;
     ifstream file (filename);
-    int day;
-    float temperature, precipitation, UV_index;
+    float precipitation, UV_index;
 
 
     while (getline(file, line)){
         istringstream stream(line);
         getline(stream, month, ',');
-        stream >> day >> temperature >> precipitation >> UV_index;
-        string date = month + to_string(day);
-        cout << date << endl;
+        getline(stream, day, ',');
+        getline(stream, temperature,',');
+        stream >> precipitation >> UV_index;
+        //cout << month << day << "-" << temperature << endl;
+        string date = month + day;
 
-        environment_factors[date] = {temperature,precipitation,UV_index};
+        environment_factors[date] = {stof(temperature),precipitation,UV_index};
+        //cout << date<< "-" << environment_factors[date][0] <<  "," << environment_factors[date][1] << endl;
+
     }
     return environment_factors;
 
