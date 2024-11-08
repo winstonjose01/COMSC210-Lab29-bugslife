@@ -16,7 +16,7 @@ private:
     float ant_GR = 0.1;          // Ants growth rate
     float ant_MR_Temp = .03;     // Ants sensitivity to Temperature
     float ant_MR_Precip = .02;   // Ants sensitivity to Precipitation
-    float ant_Topt = 25.0;       // Optimum temperature for Ants to reproduce
+    float ant_Topt = 72.0;       // Optimum temperature for Ants to reproduce
     float K_benefit = .05;       // Growth benefit because of positive effects between aphids on ants
 
 public:
@@ -27,7 +27,7 @@ public:
 
     void set_current_pop (float T_now, float Precip_now, int P_aphid_t0 ){
         P_ant_t1 = P_ant_t0 * (1 + ant_GR - ant_MR_Temp*(abs(T_now - ant_Topt)) -  ant_MR_Precip * Precip_now);
-        P_ant_t1 = (1 + K_benefit * min(1,P_aphid_t0 / P_ant_t0));
+        P_ant_t1 = P_ant_t1*(1 + K_benefit * min(1,P_aphid_t0 / P_ant_t0));
     }
     int get_current_pop()       {return P_ant_t1;}
 
