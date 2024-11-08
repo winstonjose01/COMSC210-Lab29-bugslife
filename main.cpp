@@ -22,7 +22,7 @@ int main(){
 
     int aphid_pop, ant_pop, ladybug_pop;
     float temperature, precipitation, UV_index;
-    string filename = "weather_report.csv";
+    string filename = "weather_data.csv";
 
     map<string, array<list<int>,3>> populationResults;
     map<string, array<float,3>> environment_factors;
@@ -32,14 +32,16 @@ int main(){
     Ladybug ladybug(125);
 
     for (string month : MONTH) {
-        for (int i = 0; i < DAYS_IN_MONTH[i]; i++){
+        for (int i = 1; i <= DAYS_IN_MONTH[i]; i++){
             string date = month + to_string(i);
             environment_factors = load_environment_factors(filename);
+
+            //cout << environment_factors[date][0];
             
             if (environment_factors.find(date) != environment_factors.end()){
-            temperature = environment_factors[date][0];
-            precipitation = environment_factors[date][1];
-            UV_index = environment_factors[date][2];
+                temperature = environment_factors[date][0];
+                precipitation = environment_factors[date][1];
+                UV_index = environment_factors[date][2];
             }
             else{
                 cout << "No environmental data for date :" << date << endl;
@@ -66,10 +68,7 @@ int main(){
 
 
     for (const auto& [date,populations] : populationResults) {
-        cout << date << populations;
-        cout << date << " - Aphid Population: " << populations[0];
-                << ", Ant Population: " << populations[1]
-                << ", Ladybug Population: " << populations[2] << std::endl;
+        cout << date << " - Aphid Population: " << populations[0].back() << ", Ant Population: " << populations[1].back() << ", Ladybug Population: " << populations[2].back() << std::endl;
     }
 
 
@@ -89,8 +88,8 @@ map<string,array<float,3>> load_environment_factors(string filename){
         istringstream stream(line);
         getline(stream, month, ',');
         stream >> day >> temperature >> precipitation >> UV_index;
-
         string date = month + to_string(day);
+        cout << date << endl;
 
         environment_factors[date] = {temperature,precipitation,UV_index};
     }
