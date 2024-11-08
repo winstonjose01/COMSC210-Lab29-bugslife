@@ -28,7 +28,10 @@ public:
 
     void set_current_pop (float T_now, float UV_now,float Precip_now, int P_ladybug_t0, int P_ant_t0 ){
         P_aphid_t1 = P_aphid_t0 * ((1 + aphid_GR) - aphid_MR_UV*UV_now - aphid_MR_Temp*(abs(T_now - aphid_Topt)) - aphid_Pred_LB * P_ladybug_t0/P_aphid_t0);
-        //P_aphid_t1 = (1 + K_benefit * min(1,P_ant_t0 / P_aphid_t0));
+        if (P_ant_t0 != 0)
+            P_aphid_t1 = P_aphid_t1 * (1 + K_benefit * min(1,P_ant_t0 / P_aphid_t0));
+        else
+            P_aphid_t1 = P_aphid_t1 * (1 + K_benefit);
     }
     int get_current_pop()       {return P_aphid_t1;}
 

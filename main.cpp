@@ -19,6 +19,7 @@ const string MONTH[] = {"01","02","03",
                         "07","08","09",
                         "10","11","12"};
 map<string,array<float,3>> load_environment_factors(string);
+void test_load_environment_factors(); // Unit testing
 
 int main(){
 
@@ -29,7 +30,7 @@ int main(){
     map<string, array<list<int>,3>> populationResults;
     map<string, array<float,3>> environment_factors;
     
-    Aphid aphid(8000);
+    Aphid aphid(6500);
     Ant ant (1900);
     Ladybug ladybug(1125);
 
@@ -66,7 +67,7 @@ int main(){
 
             populationResults[date][0].push_back(aphid.get_current_pop());
             populationResults[date][1].push_back(ant.get_current_pop());
-            populationResults[date][2].push_back(aphid.get_current_pop());
+            populationResults[date][2].push_back(ladybug.get_current_pop());
 
             aphid.set_initial_pop(aphid.get_current_pop());
             aphid.set_initial_pop(aphid.get_current_pop());
@@ -77,7 +78,7 @@ int main(){
 
     }
     for (const auto& [date,populations] : populationResults) {
-        cout << date << " - Aphid Population: " << populations[0].back() << ", Ant Population: " << populations[1].back() << ", Ladybug Population: " << populations[2].back() << std::endl;
+        cout << date << " : Aphid Population: " << populations[0].back() << " | Ant Population: " << populations[1].back() << " | Ladybug Population: " << populations[2].back() << std::endl;
         this_thread::sleep_for(chrono::seconds(1));
     }
     //***************Unit Testing****************/

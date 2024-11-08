@@ -12,7 +12,7 @@ private:
     int P_ladybug_t0;
     int P_ladybug_t1;
 
-    float ladybug_GR = 0.1;          // Ants growth rate
+    float ladybug_GR = 0.08;          // Ants growth rate
     float ladybug_MR_Temp = .03;     // Ants sensitivity to Temperature
     float ladybug_MR_UV = .02;   // Ants sensitivity to Precipitation
     float ladybug_Topt = 72.0;       // Optimum temperature for Ants to reproduce
