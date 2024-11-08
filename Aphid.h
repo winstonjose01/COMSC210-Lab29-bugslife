@@ -16,7 +16,7 @@ private:
     float aphid_GR = 0.1;          // Aphid growth rate
     float aphid_MR_Temp = .03;      // Aphid sensitivity to Temperature
     float aphid_MR_UV = .02;        // Aphid sensitivity to UV
-    float aphid_Topt = 25.0;        // Optimum temperature for Aphids to reproduce
+    float aphid_Topt = 72.0;        // Optimum temperature for Aphids to reproduce
     float aphid_Pred_LB = .03;        // Ladybug predation factore on aphids
     float K_benefit = .05;         // Growth benefit because of positive between ants and aphids
 

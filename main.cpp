@@ -3,9 +3,12 @@
 #include "Ant.h"
 #include "Ladybug.h"
 #include <iostream>
+#include <fstream>
 #include <list>
 #include <map>
 #include <array>
+#include <string>
+#include <sstream>
 using namespace std;
 
 const int DAYS_IN_MONTH[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
@@ -13,28 +16,76 @@ const string MONTH[] = {"Jan","Feb","march",
                         "Apr","May","Jun",
                         "Jul","Aug","Sep",
                         "Oct","Nov","Dec"};
-map<string,array<float,3>> load_environment_factors();
+map<string,array<float,3>> load_environment_factors(string);
 
 
 
 int main(){
 
     int aphid_pop, ant_pop, ladybug_pop;
+    float temperature, precipitation, UV_index;
+    string filename = "weather_report.csv";
 
-    map<string, array<list<int>,3>> population_results;
+    map<string, array<list<int>,3>> populationResults;
     map<string, array<float,3>> environment_factors;
     
     Aphid aphid(1000);
     Ant ant (600);
     Ladybug ladybug(125);
 
-    return 0;
+for (string month : MONTH) {
+    for (int i = 0; i < DAYS_IN_MONTH[i]; i++)
+        string date = month + to_string(i);
+        environment_factors = load_environment_factors(filename);
+        
+        temperature = environment_factors[0];
+        precipitation = environment_factors[1];
+        UV_index = environment_factors[2];
+
+
+        aphid_pop =  aphid.get_initial_pop();
+        ant_pop = ant.get_initial_pop();
+        ladybug_pop = ladybug.get_initial_pop();
+
+        aphid.set_current_pop(temperature,UV_index,precipitation,ladybug_pop,ant_pop);
+        ant.set_current_pop(temperature,precipitation,aphid_pop);
+        ladybug.set_current_pop(temperature,UV_index,aphid_pop);
+
+        aphid.set_initial_pop(aphid.get_current_pop());
+        aphid.set_initial_pop(aphid.get_current_pop());
+        aphid.set_initial_pop(aphid.get_current_pop());
+}
+
 
 for (const auto& [date,populations] : populationResults) {
-    std::cout << date << " - Aphid Population: " << populations[0]
+    cout << date << populations;
+    cout << date << " - Aphid Population: " << populations[0]
               << ", Ant Population: " << populations[1]
               << ", Ladybug Population: " << populations[2] << std::endl;
 }
 
+
+    return 0;
+}
+
+map<string,array<float,3>> load_environment_factors(string filename){
+
+    map<string,array<float,3>> environment_factors;
+    string line, month;
+    ifstream file (filename);
+    int day;
+    float temperature, precipitation, UV_index;
+
+
+    while (getline(file, line)){
+        istringstream stream(line);
+        getline(stream, month, ',');
+        stream >> day, temperature, precipitation;
+
+        string date = month + to_string(day);
+
+        environment_factors[date] = {temperature,precipitation,UV_index};
+    }
+    return environment_factors;
 
 }

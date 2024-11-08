@@ -16,7 +16,7 @@ private:
     float ant_GR = 0.1;          // Ants growth rate
     float ant_MR_Temp = .03;     // Ants sensitivity to Temperature
     float ant_MR_Precip = .02;   // Ants sensitivity to Precipitation
-    float ant_Topt = 25.0;       // Optimum temperature for Ants to reproduce
+    float ant_Topt = 72.0;       // Optimum temperature for Ants to reproduce
     float K_benefit = .05;       // Growth benefit because of positive effects between aphids on ants
 
 public:
