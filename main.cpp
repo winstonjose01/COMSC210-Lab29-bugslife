@@ -18,8 +18,6 @@ const string MONTH[] = {"Jan","Feb","march",
                         "Oct","Nov","Dec"};
 map<string,array<float,3>> load_environment_factors(string);
 
-
-
 int main(){
 
     int aphid_pop, ant_pop, ladybug_pop;
@@ -48,7 +46,6 @@ int main(){
                 continue;
             }
 
-
             aphid_pop =  aphid.get_initial_pop();
             ant_pop = ant.get_initial_pop();
             ladybug_pop = ladybug.get_initial_pop();
@@ -56,6 +53,10 @@ int main(){
             aphid.set_current_pop(temperature,UV_index,precipitation,ladybug_pop,ant_pop);
             ant.set_current_pop(temperature,precipitation,aphid_pop);
             ladybug.set_current_pop(temperature,UV_index,aphid_pop);
+
+            populationResults[date][0].push_back(aphid.get_current_pop());
+            populationResults[date][1].push_back(ant.get_current_pop());
+            populationResults[date][2].push_back(aphid.get_current_pop());
 
             aphid.set_initial_pop(aphid.get_current_pop());
             aphid.set_initial_pop(aphid.get_current_pop());
@@ -66,7 +67,7 @@ int main(){
 
     for (const auto& [date,populations] : populationResults) {
         cout << date << populations;
-        cout << date << " - Aphid Population: " << populations[0]
+        cout << date << " - Aphid Population: " << populations[0];
                 << ", Ant Population: " << populations[1]
                 << ", Ladybug Population: " << populations[2] << std::endl;
     }
