@@ -11,6 +11,7 @@
 #include <sstream>
 #include<thread>
 #include <assert.h>
+#include <iomanip>
 using namespace std;
 
 const int DAYS_IN_MONTH[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
@@ -19,6 +20,7 @@ const string MONTH[] = {"01","02","03",
                         "07","08","09",
                         "10","11","12"};
 map<string,array<float,3>> load_environment_factors(string);
+void print_Population(map<string,array<list<int>,3>> &);
 void test_load_environment_factors(); // Unit testing
 
 int main(){
@@ -76,11 +78,10 @@ int main(){
         }
         m++;
 
+        print_Population(populationResults);
+
     }
-    for (const auto& [date,populations] : populationResults) {
-        cout << date << " : Aphid Population: " << populations[0].back() << " | Ant Population: " << populations[1].back() << " | Ladybug Population: " << populations[2].back() << std::endl;
-        this_thread::sleep_for(chrono::seconds(1));
-    }
+
     //***************Unit Testing****************/
     test_load_environment_factors();
     cout << "All tests completed successfully.\n";
@@ -111,6 +112,14 @@ map<string,array<float,3>> load_environment_factors(string filename){
     }
     return environment_factors;
 
+}
+
+void print_Population(map<string,array<list<int>,3>> &insectPop){
+        for (const auto& [date,populations] : insectPop) {
+        cout << date << ": " << setw(18) << "Aphid Population: " << populations[0].back() << setw(4)<< "|"  << setw(18) << "Ant Population: " 
+                                << populations[1].back() << setw(4) << "|"  << setw(23) << "Ladybug Population: " << populations[2].back() << std::endl;
+        this_thread::sleep_for(chrono::seconds(1));
+    }
 }
 
 //**************************** Unit Testing ****************************************

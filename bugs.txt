@@ -1,0 +1,13 @@
+11/9/2024: Modularizing print statement in a separate function.
+[{
+	"resource": "/c:/Users/droplets/DVC/COMSC - 210 Data Structures/Lab 29 Project Bugs Life/COMSC210-Lab29-bugslife/main.cpp",
+	"owner": "cpptools",
+	"severity": 8,
+	"message": "'print_Population' was not declared in this scope",
+	"source": "gcc",
+	"startLineNumber": 80,
+	"startColumn": 9,
+	"endLineNumber": 80,
+	"endColumn": 9
+}]
+
