@@ -17,15 +17,15 @@ using namespace std;
 
 const int DAYS_IN_MONTH[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 const string MONTH[] = {"01","02","03","04","05","06","07","08","09","10","11","12"};
-const int MAX_INSECT = 6000;
-const int MIN_INSECT = 1000;
+const int MAX_INSECT = 5000;
+const int MIN_INSECT = 2500;
+const int NO_OF_YEARS = 3;
 
 map<string,array<float,3>> load_environment_factors(string);
-void print_Population(map<string,array<list<int>,3>> &);
+void print_Population(map<string,array<list<double>,3>> &);
 void test_load_environment_factors(); // Unit testing
 
 int main(){
-    //srand(time(0));
     random_device rd;
     mt19937 gen(rd());
     uniform_int_distribution<> dist(MIN_INSECT,MAX_INSECT);
@@ -33,18 +33,18 @@ int main(){
     float temperature, precipitation, UV_index;
     string filename = "weather_data.csv";
 
-    map<string, array<list<int>,3>> populationResults;
+    map<string, array<list<double>,3>> populationResults;
     map<string, array<float,3>> environment_factors;
     
     Aphid aphid(dist(gen));     // Create and initialize Aphid object
     Ant ant (dist(gen));        // Create and initialize Ant object
     Ladybug ladybug(dist(gen)); // Creat and initialize Ladybug object
+    // For debuggin
     //cout << "--->" << aphid.get_initial_pop() << " | " << ant.get_initial_pop() << " | " << ladybug.get_initial_pop()<<endl;
 
     environment_factors = load_environment_factors(filename);
-    for (int k = 0; k < 1; k++){
+    for (int k = 0; k < NO_OF_YEARS; k++){ // Simulate for 3 years
     int m = 0;
-
     for (string month : MONTH) {
         string date = "";
         for (int i = 1; i <= DAYS_IN_MONTH[m]; i++){
@@ -63,6 +63,8 @@ int main(){
                 cout << "No environmental data for date :" << date << endl;
                 continue;
             }
+            //cout << "--->" << aphid.get_initial_pop() << " | " << ant.get_initial_pop() << " | " << ladybug.get_initial_pop()<<endl;
+
 
             aphid_pop =  aphid.get_initial_pop();
             ant_pop = ant.get_initial_pop();
@@ -113,11 +115,10 @@ map<string,array<float,3>> load_environment_factors(string filename){
         getline(stream, day, ',');
         getline(stream, temperature,',');
         stream >> precipitation >> UV_index;
-        //cout << month << day << "-" << temperature << endl;
         string date = month + "-"+ day;
 
         environment_factors[date] = {stof(temperature),precipitation,UV_index};
-        //cout << date<< "-" << environment_factors[date][0] <<  "," << environment_factors[date][1] << endl;
+        
     }
     return environment_factors;
 
@@ -125,11 +126,36 @@ map<string,array<float,3>> load_environment_factors(string filename){
 // This function prints the aphid, ant, and ladybug population
 // arguments: a map with an inner array of 3 lists.
 // returns: no returns
-void print_Population(map<string,array<list<int>,3>> &insectPop){
+void print_Population(map<string,array<list<double>,3>> &insectPop){
+    for (int k = 0; k < NO_OF_YEARS; k++){
+        cout << "\n--------------------------------------- YEAR " << k + 1 << " ------------------------------------\n";
+        cout << endl;
+
         for (const auto& [date,populations] : insectPop) {
-        cout << date << ": " << setw(18) << "Aphid Population: " << populations[0].back() << setw(4)<< "|"  << setw(18) << "Ant Population: " 
-                                << populations[1].back() << setw(4) << "|"  << setw(23) << "Ladybug Population: " << populations[2].back() << std::endl;
-        this_thread::sleep_for(chrono::milliseconds(700));
+            auto it_aphid = populations[0].begin();
+            auto it_ant = populations[1].begin();
+            auto it_ladybug = populations[2].begin();
+            if (it_aphid != populations[0].end()){
+                    cout << "Year-" << k+1 << " | " << date << " --> " << setw(18) << "Aphid Population: " << static_cast<int>(populations[0].front()) << setw(4)<< "|";
+            }
+            if (it_ant != populations[1].end()){
+                cout << setw(18) << "Ant Population: " << static_cast<int>(populations[1].front()) << setw(4) << "|" ;
+            }
+            if (it_ladybug != populations[2].end()){
+                cout << setw(23) << "Ladybug Population: " << static_cast<int>(populations[2].front()) << std::endl;
+            }
+            this_thread::sleep_for(chrono::milliseconds(500));
+
+            // if (it_aphid != populations[0].end()) ++it_aphid;
+            // if (it_ant != populations[1].end()) ++it_ant;
+            // if (it_ladybug != populations[2].end()) ++it_ladybug;
+            advance(it_aphid,1);
+            advance(it_ant,1);
+            advance(it_ladybug,1);
+            }
+        // it_aphid = insectPop.begin()->second[0].begin();
+        // it_ant = insectPop.begin()->second[1].begin();
+        // it_ladybug = insectPop.begin()->second[2].begin();
     }
 }
 
