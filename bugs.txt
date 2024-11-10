@@ -11,3 +11,8 @@
 	"endColumn": 9
 }]
 
+11/9/2024: Assertion failed: test_env_factors["01-01"][0] == 43.7, file C:\Users\droplets\DVC\COMSC - 210 Data Structures\Lab 29 Project Bugs Life\COMSC210-Lab29-bugslife\main.cpp, line 135
+
+11/9/2024:Exception has occurred.
+        P_ant_t1 = P_ant_t1*(1 + K_benefit * min(1,P_aphid_t0 / P_ant_t0));
+Arithmetic exception

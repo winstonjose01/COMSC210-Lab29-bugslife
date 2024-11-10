@@ -12,19 +12,20 @@
 #include<thread>
 #include <assert.h>
 #include <iomanip>
+#include <random>
 using namespace std;
 
 const int DAYS_IN_MONTH[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-const string MONTH[] = {"01","02","03",
-                        "04","05","06",
-                        "07","08","09",
-                        "10","11","12"};
+const string MONTH[] = {"01","02","03","04","05","06","07","08","09","10","11","12"};
+const int MAX_INSECT = 6000;
+const int MIN_INSECT = 100;
+
 map<string,array<float,3>> load_environment_factors(string);
 void print_Population(map<string,array<list<int>,3>> &);
 void test_load_environment_factors(); // Unit testing
 
 int main(){
-
+    srand(time(0));
     int aphid_pop, ant_pop, ladybug_pop;
     float temperature, precipitation, UV_index;
     string filename = "weather_data.csv";
@@ -32,11 +33,12 @@ int main(){
     map<string, array<list<int>,3>> populationResults;
     map<string, array<float,3>> environment_factors;
     
-    Aphid aphid(6500);
-    Ant ant (1900);
-    Ladybug ladybug(1125);
+    Aphid aphid(rand() %(MAX_INSECT-MIN_INSECT + 1) - MIN_INSECT);
+    Ant ant (rand() %(MAX_INSECT-MIN_INSECT + 1) - MIN_INSECT);
+    Ladybug ladybug(rand() %(MAX_INSECT-MIN_INSECT + 1) - MIN_INSECT);
 
     int m = 0;
+    environment_factors = load_environment_factors(filename);
     for (string month : MONTH) {
         string date = "";
         for (int i = 1; i <= DAYS_IN_MONTH[m]; i++){
@@ -44,8 +46,6 @@ int main(){
                 date = month + "-0" + to_string(i);
             else
                 date = month + "-" + to_string(i);
-
-            environment_factors = load_environment_factors(filename);
             
             if (environment_factors.find(date) != environment_factors.end()){
                 temperature = environment_factors[date][0];
@@ -72,8 +72,8 @@ int main(){
             populationResults[date][2].push_back(ladybug.get_current_pop());
 
             aphid.set_initial_pop(aphid.get_current_pop());
-            aphid.set_initial_pop(aphid.get_current_pop());
-            aphid.set_initial_pop(aphid.get_current_pop());
+            ant.set_initial_pop(ant.get_current_pop());
+            ladybug.set_initial_pop(ladybug.get_current_pop());
 
         }
         m++;
@@ -88,14 +88,15 @@ int main(){
 
     return 0;
 }
-
+// This function loads the environmental data into a map with an inner array of 3 float values
+// arguments: a string that is the filename with environmental data
+// returns: a map with array of 3 values: temperature, precipitation, uv-index
 map<string,array<float,3>> load_environment_factors(string filename){
 
     map<string,array<float,3>> environment_factors;
     string line, month, day, temperature;
     ifstream file (filename);
     float precipitation, UV_index;
-
 
     while (getline(file, line)){
         istringstream stream(line);
@@ -108,17 +109,18 @@ map<string,array<float,3>> load_environment_factors(string filename){
 
         environment_factors[date] = {stof(temperature),precipitation,UV_index};
         //cout << date<< "-" << environment_factors[date][0] <<  "," << environment_factors[date][1] << endl;
-
     }
     return environment_factors;
 
 }
-
+// This function prints the aphid, ant, and ladybug population
+// arguments: a map with an inner array of 3 lists.
+// returns: no returns
 void print_Population(map<string,array<list<int>,3>> &insectPop){
         for (const auto& [date,populations] : insectPop) {
         cout << date << ": " << setw(18) << "Aphid Population: " << populations[0].back() << setw(4)<< "|"  << setw(18) << "Ant Population: " 
                                 << populations[1].back() << setw(4) << "|"  << setw(23) << "Ladybug Population: " << populations[2].back() << std::endl;
-        this_thread::sleep_for(chrono::seconds(1));
+        this_thread::sleep_for(chrono::milliseconds(500));
     }
 }
 
