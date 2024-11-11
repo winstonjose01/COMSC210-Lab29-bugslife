@@ -1,0 +1,35 @@
+11/9/2024: Modularizing print statement in a separate function.
+[{
+	"resource": "/c:/Users/droplets/DVC/COMSC - 210 Data Structures/Lab 29 Project Bugs Life/COMSC210-Lab29-bugslife/main.cpp",
+	"owner": "cpptools",
+	"severity": 8,
+	"message": "'print_Population' was not declared in this scope",
+	"source": "gcc",
+	"startLineNumber": 80,
+	"startColumn": 9,
+	"endLineNumber": 80,
+	"endColumn": 9
+}]
+
+11/9/2024: Called wrong get methods in main. Used aphid.get_current_pop() for ant and ladybug
+	    	aphid.set_initial_pop(aphid.get_current_pop());
+            ant.set_initial_pop(aphid.get_current_pop());
+            ladybug.set_initial_pop(aphid.get_current_pop());
+
+11/9/2024: Assertion failed: test_env_factors["01-01"][0] == 43.7, file C:\Users\droplets\DVC\COMSC - 210 Data Structures\Lab 29 Project Bugs Life\COMSC210-Lab29-bugslife\main.cpp, line 135
+
+11/9/2024: Exception has occurred. Most likely division by 0
+         if (P_ant_t0 < 10){
+            P_ant_t1 = P_ant_t1*(1 + K_benefit * min(1,P_aphid_t0 / P_ant_t0));
+        }
+        else{
+            P_ant_t1 = P_ant_t1*(1 + K_benefit);
+        }
+Arithmetic exception
+
+
+11/9/2024: Logic error. The population for Dec31 should carry over to 
+population for Jan1 of the next year, but it is not doing that. Adding code to do this
+
+
+
