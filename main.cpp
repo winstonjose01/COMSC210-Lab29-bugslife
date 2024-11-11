@@ -1,3 +1,7 @@
+// COMSC 210 | Lab 29,30,31 | Winston Jose
+// IDE used: Visual Studio Code
+// Github link: https://github.com/winstonjose01/COMSC210-Lab29-bugslife 
+
 
 #include "Aphid.h"
 #include "Ant.h"
@@ -14,24 +18,25 @@
 #include <iomanip>
 #include <random>
 using namespace std;
-
+// Constants for typical days and months in a year
 const int DAYS_IN_MONTH[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 const string MONTH[] = {"01","02","03","04","05","06","07","08","09","10","11","12"};
-const int MAX_INSECT = 5000;
-const int MIN_INSECT = 2500;
-const int NO_OF_YEARS = 3;
+const int MAX_INSECT = 5000; // Max population for each insect
+const int MIN_INSECT = 2500; // Min population for each insect
+const int NO_OF_YEARS = 3;   // No of years to simulate
 
 map<string,array<float,3>> load_environment_factors(string);
 void print_Population(map<string,array<list<double>,3>> &);
 void test_load_environment_factors(); // Unit testing
 
 int main(){
-    random_device rd;
+    random_device rd;   // Random device generator
     mt19937 gen(rd());
-    uniform_int_distribution<> dist(MIN_INSECT,MAX_INSECT);
+    uniform_int_distribution<> dist(MIN_INSECT,MAX_INSECT); // Uniform distribution
     int aphid_pop, ant_pop, ladybug_pop;
-    float temperature, precipitation, UV_index;
-    string filename = "weather_data.csv";
+    float temperature, precipitation, UV_index; // Variables for environmental data
+    string filename = "weather_data.csv";  // Filename for environmental data
+    int aphid_pop_yrend, ant_pop_yrend, ladybug_pop_yrend;
 
     map<string, array<list<double>,3>> populationResults;
     map<string, array<float,3>> environment_factors;
@@ -47,45 +52,61 @@ int main(){
     int m = 0;
     for (string month : MONTH) {
         string date = "";
+        // Loop through each day in the month
         for (int i = 1; i <= DAYS_IN_MONTH[m]; i++){
+            // Format date string
             if (i < 10)
                 date = month + "-0" + to_string(i);
             else
                 date = month + "-" + to_string(i);
             
+            // Check if environmental data exists for the date
             if (environment_factors.find(date) != environment_factors.end()){
                 temperature = environment_factors[date][0];
                 precipitation = environment_factors[date][1];
                 UV_index = environment_factors[date][2];
-                //cout << date << "|" << temperature << endl;
             }
             else{
+                // Skip if no data is found
                 cout << "No environmental data for date :" << date << endl;
                 continue;
             }
-            //cout << "--->" << aphid.get_initial_pop() << " | " << ant.get_initial_pop() << " | " << ladybug.get_initial_pop()<<endl;
 
-
+            // Get the initial population of each insect type
             aphid_pop =  aphid.get_initial_pop();
             ant_pop = ant.get_initial_pop();
             ladybug_pop = ladybug.get_initial_pop();
+
             //cout << aphid_pop << " | " << ant_pop << " | " << ladybug_pop <<endl;
 
+             // Update populations based on environmental factors
             aphid.set_current_pop(temperature,UV_index,precipitation,ladybug_pop,ant_pop);
             ant.set_current_pop(temperature,precipitation,aphid_pop);
             ladybug.set_current_pop(temperature,UV_index,aphid_pop);
 
+             // Store the updated population in the map for the current date
             populationResults[date][0].push_back(aphid.get_current_pop());
             populationResults[date][1].push_back(ant.get_current_pop());
             populationResults[date][2].push_back(ladybug.get_current_pop());
 
+             // Update initial populations for the next day
             aphid.set_initial_pop(aphid.get_current_pop());
             ant.set_initial_pop(ant.get_current_pop());
             ladybug.set_initial_pop(ladybug.get_current_pop());
 
+            if (month == "12" && i == 31){
+                aphid_pop_yrend = aphid.get_current_pop();
+                ant_pop_yrend = ant.get_current_pop();
+                ladybug_pop_yrend = ladybug.get_current_pop();
+                //cout << aphid_pop_yrend << " | " << ant_pop_yrend << " | " << ladybug_pop_yrend << endl;
+
+            }
         }
         m++;
     }
+    aphid.set_initial_pop(aphid_pop_yrend);
+    ant.set_initial_pop(ant_pop_yrend);
+    ladybug.set_initial_pop(ladybug_pop_yrend);
     }
 
     print_Population(populationResults);
@@ -128,34 +149,33 @@ map<string,array<float,3>> load_environment_factors(string filename){
 // returns: no returns
 void print_Population(map<string,array<list<double>,3>> &insectPop){
     for (int k = 0; k < NO_OF_YEARS; k++){
-        cout << "\n--------------------------------------- YEAR " << k + 1 << " ------------------------------------\n";
+        cout << "\n------------------------------------------ YEAR " << k + 1 << " ---------------------------------------\n";
         cout << endl;
 
         for (const auto& [date,populations] : insectPop) {
-            auto it_aphid = populations[0].begin();
-            auto it_ant = populations[1].begin();
-            auto it_ladybug = populations[2].begin();
+            auto it_aphid = populations[0].begin();  // Iterator for aphid population
+            auto it_ant = populations[1].begin();    // Iterator for ant population
+            auto it_ladybug = populations[2].begin(); // Iterator for ladybug population
+            // Check if there are aphid populations to print
             if (it_aphid != populations[0].end()){
-                    cout << "Year-" << k+1 << " | " << date << " --> " << setw(18) << "Aphid Population: " << static_cast<int>(populations[0].front()) << setw(4)<< "|";
+                    cout << "Year-" << k+1 << " | " << date << " --> " << setw(18) << "Aphid Population: " << static_cast<int>(*it_aphid) << setw(4)<< "|";
             }
+             // Check if there are ant populations to print
             if (it_ant != populations[1].end()){
-                cout << setw(18) << "Ant Population: " << static_cast<int>(populations[1].front()) << setw(4) << "|" ;
+                cout << setw(18) << "Ant Population: " << static_cast<int>(*it_ant) << setw(4) << "|" ;
             }
+            // Check if there are ladybug populations to print
             if (it_ladybug != populations[2].end()){
-                cout << setw(23) << "Ladybug Population: " << static_cast<int>(populations[2].front()) << std::endl;
+                cout << setw(23) << "Ladybug Population: " << static_cast<int>(*it_ladybug) << std::endl;
             }
+            // Pause for a brief moment (500 ms)
             this_thread::sleep_for(chrono::milliseconds(500));
 
-            // if (it_aphid != populations[0].end()) ++it_aphid;
-            // if (it_ant != populations[1].end()) ++it_ant;
-            // if (it_ladybug != populations[2].end()) ++it_ladybug;
+            // Move to the next day for each insect population
             advance(it_aphid,1);
             advance(it_ant,1);
             advance(it_ladybug,1);
-            }
-        // it_aphid = insectPop.begin()->second[0].begin();
-        // it_ant = insectPop.begin()->second[1].begin();
-        // it_ladybug = insectPop.begin()->second[2].begin();
+            };
     }
 }
 
